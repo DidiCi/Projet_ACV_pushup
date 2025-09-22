@@ -23,6 +23,8 @@ class PushUpCounter(ExcerciseCounter):
             self.classify_up_down(landmarks) # updates self.stage
         elif method=="logic":
             self.classify_up_down_logic(landmarks) # updates self.stage
+        elif method=="jamila":
+            self.classify_up_down_jamila(landmarks) # updates self.stage
 
         # Only append if stage changes
         if not self.stage_sequence or self.stage != self.stage_sequence[-1]:
@@ -36,6 +38,27 @@ class PushUpCounter(ExcerciseCounter):
             self.stage_sequence = []  # reset after counting 
         
         return self.count, self.stage
+
+
+    def classify_up_down_jamila(self, landmarks):
+     
+        # Seuils de hauteur de l'épaule (ajuster selon la caméra et la position)
+        SHOULDER_LOW_THRESHOLD = 0.5   # Position "basse"
+        SHOULDER_HIGH_THRESHOLD = 0.7  # Position "haute"
+
+        # Position de l'épaule droite (Right Shoulder)
+        shoulder = landmarks[RIGHT_SHOULDER]
+        shoulder_y = shoulder.y
+
+        # Logique de comptage des pompes
+        stage = "other"
+        print(shoulder_y)
+        if shoulder_y < SHOULDER_LOW_THRESHOLD:
+            stage = "down"
+        if shoulder_y > SHOULDER_HIGH_THRESHOLD:
+            stage = "up"
+
+        self.stage = stage
 
 
     def classify_up_down_logic(self, landmarks):

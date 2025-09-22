@@ -71,3 +71,21 @@ class Visualizer():
                             font_scale, (0, 0, 0), thickness, cv2.LINE_AA)
         
         return frame
+    
+    def draw_position_warning(self, frame, example_image=None):
+        h, w, _ = frame.shape
+        overlay = frame.copy()
+        cv2.rectangle(overlay, (50, 50), (w-50, h-50), (0, 0, 255), -1)
+        alpha = 0.5
+        frame = cv2.addWeighted(overlay, alpha, frame, 1 - alpha, 0)
+
+        cv2.putText(frame, "Please position correctly",
+                    (100, 100), cv2.FONT_HERSHEY_SIMPLEX,
+                    1.2, (255, 255, 255), 3, cv2.LINE_AA)
+
+        if example_image is not None:
+            # resize and overlay example image bottom right
+            ex = cv2.resize(example_image, (200, 200))
+            frame[-220:-20, -220:-20] = ex
+
+        return frame
