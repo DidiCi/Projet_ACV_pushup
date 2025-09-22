@@ -54,10 +54,42 @@ class PositionValidator:
         
         return True
     
+    def check_position(self, landmarks):
+        
+        # Extract landmarks
+        left_shoulder = landmarks[LEFT_SHOULDER]
+        right_shoulder = landmarks[RIGHT_SHOULDER]
+        left_wrist = landmarks[LEFT_WRIST]
+        right_wrist = landmarks[RIGHT_WRIST]
+        left_foot = landmarks[LEFT_FOOT]
+        right_foot = landmarks[RIGHT_FOOT]
+
+        # Left or right side at least 0.5 visibility
+        view = None
+        if left_shoulder.visibility > 0.5 and left_wrist.visibility > 0.5 and left_foot.visibility > 0.5:
+            view = "left"
+        elif right_shoulder.visibility > 0.5 and right_wrist.visibility > 0.5 and right_foot.visibility > 0.5:
+            view = "right"
+        else: 
+            return False
+        
+        # Feets roughly horizontal with hands (same y, whitin some range) 
+        position_feet = "other"
+        if view == "left":
+            position_feet = self.position_feet(left_foot, left_wrist)
+        elif view == "right":
+            position_feet = self.position_feet(right_foot, right_wrist)
+        if position_feet != "horizontal":
+            return False
+        
+        return True
+
+
     def position_feet(self, foot, wrist):
         if abs(foot.y - wrist.y) < 0.2:
             return "horizontal"
         return False
+    
 
     def position_schoulder_elbow(self, shoulder, elbow):
         if shoulder.y < elbow.y:
