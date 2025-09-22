@@ -65,9 +65,9 @@ class PushUpCounter(ExcerciseCounter):
         self.stage = position
 
     def position_schoulder_elbow(self, shoulder, elbow):
-        if shoulder.y > elbow.y:
+        if shoulder.y < elbow.y:
             position = "up"
-        elif shoulder.y < elbow.y:
+        elif shoulder.y > elbow.y:
             position = "down"
         else:
             position = "other"
