@@ -14,19 +14,23 @@ def main():
     counter = PushUpCounter()
     visualizer = Visualizer()
 
+    # Initialize count and stage
+    count, stage = 0, "other"
+
     while video.is_open():
         frame = video.get_frame()
         if frame is None:
             break
-
         
         results = detector.detect(frame) # media pipe pose detection
 
         if results.pose_landmarks:
-            #count = counter.update(results.pose_landmarks.landmark)
-            count = 100
+            count, stage = counter.update(results.pose_landmarks.landmark, method="logic")
             frame = detector.draw(frame, results)
-            frame = visualizer.draw_count(frame, count)        
+        
+        # Show count and stage
+        frame = visualizer.draw_count(frame, count)
+        frame = visualizer.draw_stage(frame, stage)           
 
         video.show(frame)
 
