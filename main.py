@@ -52,6 +52,7 @@ def main():
                     count, stage = counter.update(results.pose_landmarks.landmark, method="logic")
                     frame = detector.draw(frame, results)
                 else:
+                    stage = "other"
                     frame = detector.draw(frame, results)
                     frame = visualizer.draw_position_warning(frame, example_image=None, text=False)
             
