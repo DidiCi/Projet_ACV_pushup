@@ -53,8 +53,9 @@ def main():
                     frame = detector.draw(frame, results)
                 else:
                     stage = "other"
+                    counter.stage_sequence = [] # reset
                     frame = detector.draw(frame, results)
-                    frame = visualizer.draw_position_warning(frame, example_image=None, text=False)
+                    frame = visualizer.draw_position_warning(frame, example_image=pushup_start_img, text=False)
             
         if start_ready: # Show count and stage
             frame = visualizer.draw_count(frame, count)
