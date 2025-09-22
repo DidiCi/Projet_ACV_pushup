@@ -41,7 +41,7 @@ def main():
                     print("✅ Starting position confirmed. Begin counting!")
             
             else: # ready for counting!
-                count, stage = counter.update(results.pose_landmarks.landmark, method="logic")
+                count, stage = counter.update(results.pose_landmarks.landmark, method="jamila")
                 frame = detector.draw(frame, results)
         
         if start_ready: # Show count and stage
