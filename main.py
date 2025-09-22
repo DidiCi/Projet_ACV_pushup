@@ -47,9 +47,14 @@ def main():
                     print("✅ Starting position confirmed. Begin counting!")
             
             else: # ready for counting!
-                count, stage = counter.update(results.pose_landmarks.landmark, method="jamila")
-                frame = detector.draw(frame, results)
-        
+                valid_position = validator.check_position(results.pose_landmarks.landmark) # if position is still valid
+                if valid_position:
+                    count, stage = counter.update(results.pose_landmarks.landmark, method="logic")
+                    frame = detector.draw(frame, results)
+                else:
+                    frame = detector.draw(frame, results)
+                    frame = visualizer.draw_position_warning(frame, example_image=None, text=False)
+            
         if start_ready: # Show count and stage
             frame = visualizer.draw_count(frame, count)
             frame = visualizer.draw_stage(frame, stage)           
