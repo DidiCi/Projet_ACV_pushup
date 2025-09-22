@@ -52,7 +52,6 @@ class PushUpCounter(ExcerciseCounter):
 
         # Logique de comptage des pompes
         stage = "other"
-        print(shoulder_y)
         if shoulder_y < SHOULDER_LOW_THRESHOLD:
             stage = "down"
         if shoulder_y > SHOULDER_HIGH_THRESHOLD:

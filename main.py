@@ -19,6 +19,7 @@ def main():
     # Initialize count and stage
     count, stage = 0, "other"
     start_ready = False # Not correct starting position
+    valid_position = False # Valid position during push ups
 
     while video.is_open():
         frame = video.get_frame()
@@ -27,9 +28,14 @@ def main():
         
         results = detector.detect(frame) # media pipe pose detection
 
-        if not results.pose_landmarks: # Not started yet and nobody in view
-            if not start_ready:
-               frame = visualizer.draw_position_warning(frame)
+        if not results.pose_landmarks: 
+            if not start_ready: # Not started yet and nobody in view
+               pushup_start_img = cv2.imread("assets/images/pushup_standard.png")
+               frame = visualizer.draw_position_warning(frame, pushup_start_img, text=True)
+            else: # No landmarks but already counted (e.g. person comes back to see score)
+                frame = visualizer.draw_position_warning(frame, pushup_start_img, text=False)
+                frame = visualizer.draw_count(frame, count)
+                frame = visualizer.draw_stage(frame, stage)  
 
         elif results.pose_landmarks: # Person detected
 
