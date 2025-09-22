@@ -1,4 +1,7 @@
 import numpy as np
+import joblib
+from tensorflow.keras.models import load_model
+
 
 from .exercise_counter import ExcerciseCounter
 
@@ -16,6 +19,9 @@ class PushUpCounter(ExcerciseCounter):
         super().__init__() 
         self.stage = "other"
         self.stage_sequence = []
+        self.model = load_model("./model/mlp_pushup_model1.h5")
+        self.scaler = joblib.load("./model/scaler_pushup.pkl")
+        self.le = joblib.load("./model/label_encoder.pkl")
 
     def update(self, landmarks, method="ml"):
 
@@ -99,13 +105,12 @@ class PushUpCounter(ExcerciseCounter):
 
     def classify_up_down(self, landmarks):
         
-        # selection left right by visibility
+        keypoints = np.array([[lm.x, lm.y] for lm in landmarks])
+        X_new = keypoints.flatten().reshape(1, -1)
+        X_new_scaled = self.scaler.transform(X_new)
 
-        # return "up", "down", "other"
+        y_pred = self.model.predict(X_new_scaled)
+        pred_class_idx = y_pred.argmax()  
+        pred_label = self.le.inverse_transform([pred_class_idx])[0]
 
-        if self.stage == "other":
-            self.stage = "up"
-        elif self.stage == "up":
-            self.stage = "down"
-        elif self.stage == "down":
-            self.stage = "up"
+        self.stage = pred_label
