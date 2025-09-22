@@ -87,10 +87,38 @@ class PushUpCounter(ExcerciseCounter):
 
         if view == "left":
             position = self.position_schoulder_elbow(left_shoulder, left_elbow)
+            if position == "up":
+                angle = self.calculate_angle(left_shoulder, left_elbow, left_wrist)
+                if angle < 150:
+                    position = "other"
         if view == "right":
             position = self.position_schoulder_elbow(right_shoulder, right_elbow)
+            if position == "up":
+                angle = self.calculate_angle(right_shoulder, right_elbow, right_wrist)
+                if angle < 150:
+                    position = "other"
 
         self.stage = position
+
+
+    def calculate_angle(self, a, b, c):
+        """
+        Calculates the angle at point b given three points a, b, c
+        a, b, c: each is a landmark with .x and .y (normalized or pixel coordinates)
+        Returns angle in degrees
+        """
+        a = np.array([a.x, a.y])
+        b = np.array([b.x, b.y])
+        c = np.array([c.x, c.y])
+
+        ba = a - b
+        bc = c - b
+
+        cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+        angle = np.arccos(np.clip(cosine_angle, -1.0, 1.0))
+
+        return np.degrees(angle)
+
 
     def position_schoulder_elbow(self, shoulder, elbow):
         if shoulder.y < elbow.y:
@@ -103,7 +131,7 @@ class PushUpCounter(ExcerciseCounter):
 
 
     def classify_up_down(self, landmarks):
-        
+
         keypoints = np.array([[lm.x, lm.y] for lm in landmarks])
         X_new = keypoints.flatten().reshape(1, -1)
         X_new_scaled = self.scaler.transform(X_new)
